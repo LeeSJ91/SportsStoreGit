@@ -1,0 +1,53 @@
+﻿@model SportsStore.WebUI.Models.CartIndexViewModel
+
+@{ 
+    ViewBag.Title = "Sports Store: Your Cart";
+}
+
+<style>
+    #cartTable td {
+        vertical-align:middle;
+    }
+</style>
+
+<h2>내 카트</h2>
+<table id="cartTable" class="table">
+    <thead>
+    <tr>
+        <th>수량</th>
+        <th>물건</th>
+        <th class="text-right">가격</th>
+        <th class="text-right">합계</th>
+    </tr>
+    </thead>
+    <tbody>
+        @foreach (var line in Model.Cart.Lines)
+        {
+            <tr>
+                <td class="text-center">@line.Quantity</td>
+                <td class="text-left">@line.Product.Name</td>
+                <td class="text-right">@line.Product.Price</td>
+                <td class="text-right">@((line.Quantity*line.Product.Price).ToString("C"))</td>
+                <td>
+                    @using (Html.BeginForm("RemoveFromCart", "Cart"))
+                    {
+                        @Html.Hidden("ProductId",line.Product.ProductID)
+                        @Html.HiddenFor(x=>x.ReturnUrl)
+                        <input type="submit" class="btn btn-sm btn-warning" value="Remove" />
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3" class="text-right">총 합계:</td>
+            <td class="text-right">@Model.Cart.ComputerTotalValue().ToString("C")</td>
+        </tr>
+    </tfoot>
+</table>
+
+<div>
+    <a class="btn btn-primary" href="@Model.ReturnUrl">계속 쇼핑하기</a>
+    @Html.ActionLink("바로 구입하기","Checkout", null, new { @class="btn btn-primary"})
+</div>
